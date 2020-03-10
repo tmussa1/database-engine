@@ -8,6 +8,7 @@ import com.sleepycat.je.*;
 import java.io.*;
 import java.util.Arrays;
 
+
 /**
  * A class that represents a row that will be inserted in a table in a
  * relational database.
@@ -28,6 +29,9 @@ public class InsertRow {
     
     /** The field with this offset has a null value. */
     public static final int IS_NULL = -2;
+
+    private boolean isFirstOffset = false;
+    private int previousVal = 0;
     
     /**
      * Constructs an InsertRow object for a row containing the specified
@@ -57,96 +61,163 @@ public class InsertRow {
      * exception. In reality, an IOException should *not* occur in the
      * context of our RowOutput class.)
      */
-    public void marshall() throws IOException {
-
+    public void marshall() {
         populateOffsets(offsets);
 
-        keyBuffer.writeBytes();
-
-        /*
-         * PS 2: Implement this method. 
-         * 
-         * Feel free to also add one or more private helper methods
-         * to do some of the work (e.g., to fill in the offsets array
-         * with the appropriate offsets).
-         */
-    }
-
-    private Column findPrimaryKey(){
-        Column primaryKeyColumn = null;
-        for(int i = 0; i < table.numColumns(); i++){
-            if(table.getColumn(i).isPrimaryKey()){
-                primaryKeyColumn = primaryKeyColumn;
-            }
+        try {
+            writePrimaryKey();
+            writeOffsets();
+            writeValues();
+        } catch (IOException e) {
+            System.out.println("Error writing to buffer");
         }
-        return primaryKeyColumn;
+
+        DatabaseEntry key = new DatabaseEntry(keyBuffer.getBufferBytes(), 0, keyBuffer.getBufferLength());
+
+        DatabaseEntry value = new DatabaseEntry(valueBuffer.getBufferBytes(), 0, valueBuffer.getBufferLength());
+
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++" +keyBuffer);
+        System.out.println("++++++++++++++++++++++++++++++++++++++++++" + valueBuffer);
+
+        Database db = null;
+
+        db.putNoOverwrite(null, key, value);
+
+
     }
 
-    private void populateOffsets(int[] offsets) {
+    private void writeOffsets() throws IOException {
+        for(int i = 0; i < offsets.length; i++){
+            valueBuffer.writeShort(offsets[i]);
+        }
+    }
 
-        int firstOffset = (offsets.length) * 2;
-        offsets[0] = populateFirstOffset(firstOffset);
-
-        for(int i = 1; i < offsets.length; i++){
-
-            Column column = table.getColumn(i);
-            int previous = i - 1;
-
-            if(!column.isNotNull()){
-                offsets[i] = IS_NULL;
-                continue;
-            }
-
-            if(column.isPrimaryKey()){
-                offsets[i] = IS_PKEY;
-                continue;
-            }
-
-            if(precededByPrimaryKeyOrNull(previous, column, i)){
-                precededByPrimaryKeyOrNull(previous, column, i);
-                continue;
-            } else {
-                if(column.getValType() == 3){
-                    offsets[i] = offsets[i - 1] + column.getValue().toString().length();
-                } else {
-                    offsets[i] = offsets[i - 1] + column.getLength();
+    private void writeValues() throws IOException {
+        for(int i = 0; i < this.table.numColumns(); i++) {
+            Column column = this.table.getColumn(i);
+            int type = column.getType();
+            Object value = this.columnVals[i];
+            if (value != null && !column.isPrimaryKey()) {
+                switch (type) {
+                    case Column.VARCHAR:
+                        String strValue = (String) value;
+                        valueBuffer.writeBytes(strValue);
+                        break;
+                    case Column.INTEGER:
+                        Integer intValue = (Integer) value;
+                        valueBuffer.writeInt(intValue.intValue());
+                        break;
+                    case Column.REAL:
+                        Double doubleValue = (Double) value;
+                        valueBuffer.writeDouble(doubleValue.doubleValue());
+                        break;
+                    case Column.CHAR:
+                        String charValue = (String) value;
+                        valueBuffer.writeChars(charValue);
+                        break;
                 }
             }
         }
     }
 
-    private boolean precededByPrimaryKeyOrNull(int previous, Column column, int i) {
-        int firstOffset = (offsets.length) * 2;
-        boolean isPrecededByPKorNull = false;
-
-        while(offsets[previous] == IS_PKEY || offsets[previous] == IS_NULL){
-            if(previous == 0){
-                offsets[i] = firstOffset;
-            }
-            isPrecededByPKorNull = true;
-            previous--;
+    private void writePrimaryKey() throws IOException {
+        Object key = this.columnVals[findPrimaryKey()];
+        int type = this.table.getColumn(findPrimaryKey()).getType();
+        switch(type){
+            case Column.VARCHAR:
+                String strKey = (String) key;
+                keyBuffer.writeBytes(strKey);
+                break;
+            case Column.INTEGER:
+                Integer intKey = (Integer) key;
+                keyBuffer.writeInt(intKey.intValue());
+                break;
+            case Column.REAL:
+                Double doubleKey = (Double) key;
+                keyBuffer.writeDouble(doubleKey.doubleValue());
+                break;
+            case Column.CHAR:
+                String charKey = (String) key;
+                keyBuffer.writeChars(charKey);
+                break;
         }
-
-        if(previous > 0 && (previous != i - 1) && (offsets[previous + 1] == IS_PKEY || offsets[previous + 1] == IS_NULL)){
-            if(column.getValType() == 3){
-                offsets[i] = offsets[previous] + column.getValue().toString().length();
-            } else {
-                offsets[i] = offsets[previous] + column.getLength();
-            }
-            isPrecededByPKorNull = true;
-        }
-        return isPrecededByPKorNull;
     }
 
-    public int populateFirstOffset(int firstOffset){
-        if (table.getColumn(0).isPrimaryKey()) {
+    private void populateOffsets(int[] offsets) {
+
+        int firstOffset = (this.offsets.length * 2);
+
+        if(findPrimaryKey() == 0){
             offsets[0] = IS_PKEY;
-        } else if (!table.getColumn(0).isNotNull()){
+        } else if(this.columnVals[0] == null){
             offsets[0] = IS_NULL;
         } else {
             offsets[0] = firstOffset;
         }
-        return offsets[0];
+
+        for(int i = 1; i < this.table.numColumns(); i++){
+            Column column = this.table.getColumn(i);
+
+            if(i == findPrimaryKey()){
+                offsets[i] = IS_PKEY;
+            } else if(this.columnVals[i] == null){
+                offsets[i] = IS_NULL;
+            } else {
+                if(column.getType() == Column.VARCHAR){
+                    String strColumn = (String) this.columnVals[i];
+                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, strColumn.length());
+                } else{
+                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, column.getLength());
+                }
+            }
+        }
+        populateLastOffset(offsets);
+    }
+
+    private void populateLastOffset(int[] offsets) {
+        int lastPositiveIndex = offsets.length - 2;
+        while(offsets[lastPositiveIndex] < 0){
+            lastPositiveIndex--;
+        }
+        if(this.table.getColumn(lastPositiveIndex).getType() == Column.VARCHAR){
+            offsets[offsets.length - 1] = ((String) this.columnVals[lastPositiveIndex]).length() +
+                    offsets[lastPositiveIndex];
+        } else {
+            offsets[offsets.length - 1] = this.table.getColumn(lastPositiveIndex).getLength() +
+                    offsets[lastPositiveIndex];
+        }
+    }
+
+    private void findANonNegativePredecessorAndSetOffset(int[] offsets, int predecessor, int index, int value) {
+        int firstOffset = (this.offsets.length * 2);
+
+        while(predecessor > 0 && offsets[predecessor] < 0){
+            predecessor--;
+        }
+
+        if(isFirstOffset){
+            offsets[index] = offsets[predecessor] + previousVal;
+            isFirstOffset = false;
+            previousVal = 0;
+        } else {
+            if(predecessor == 0 && offsets[predecessor] < 0){
+                offsets[index] = firstOffset;
+                isFirstOffset = true;
+                previousVal = value;
+            } else {
+                offsets[index] = offsets[predecessor] + value;
+            }
+        }
+    }
+
+    private int findPrimaryKey(){
+        int primaryKeyIndex = 0;
+        for(int i = 0; i < table.numColumns(); i++){
+            if(table.getColumn(i).isPrimaryKey()){
+                primaryKeyIndex = i;
+            }
+        }
+        return primaryKeyIndex;
     }
 
     /**
