@@ -62,6 +62,7 @@ public class InsertRow {
      * context of our RowOutput class.)
      */
     public void marshall() {
+
         populateOffsets(offsets);
 
         try {
@@ -73,25 +74,29 @@ public class InsertRow {
         }
 
         DatabaseEntry key = new DatabaseEntry(keyBuffer.getBufferBytes(), 0, keyBuffer.getBufferLength());
-
         DatabaseEntry value = new DatabaseEntry(valueBuffer.getBufferBytes(), 0, valueBuffer.getBufferLength());
 
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++" +keyBuffer);
-        System.out.println("++++++++++++++++++++++++++++++++++++++++++" + valueBuffer);
-
+        //TODO - find out how to open the database
         Database db = null;
 
         db.putNoOverwrite(null, key, value);
 
-
     }
 
+    /**
+     * Writes offsets
+     * @throws IOException
+     */
     private void writeOffsets() throws IOException {
         for(int i = 0; i < offsets.length; i++){
             valueBuffer.writeShort(offsets[i]);
         }
     }
 
+    /**
+     * Writes values based on type
+     * @throws IOException
+     */
     private void writeValues() throws IOException {
         for(int i = 0; i < this.table.numColumns(); i++) {
             Column column = this.table.getColumn(i);
@@ -120,6 +125,10 @@ public class InsertRow {
         }
     }
 
+    /**
+     * Writes primary key based on type
+     * @throws IOException
+     */
     private void writePrimaryKey() throws IOException {
         Object key = this.columnVals[findPrimaryKey()];
         int type = this.table.getColumn(findPrimaryKey()).getType();
@@ -143,6 +152,10 @@ public class InsertRow {
         }
     }
 
+    /**
+     * Populates offsets. The first and last offsets are special
+     * @param offsets
+     */
     private void populateOffsets(int[] offsets) {
 
         int firstOffset = (this.offsets.length * 2);
@@ -174,6 +187,10 @@ public class InsertRow {
         populateLastOffset(offsets);
     }
 
+    /**
+     * Populates last offset
+     * @param offsets
+     */
     private void populateLastOffset(int[] offsets) {
         int lastPositiveIndex = offsets.length - 2;
         while(offsets[lastPositiveIndex] < 0){
@@ -188,6 +205,13 @@ public class InsertRow {
         }
     }
 
+    /**
+     * Finds the last positive offset and sets consecutive offsets
+     * @param offsets
+     * @param predecessor
+     * @param index
+     * @param value
+     */
     private void findANonNegativePredecessorAndSetOffset(int[] offsets, int predecessor, int index, int value) {
         int firstOffset = (this.offsets.length * 2);
 
@@ -210,6 +234,10 @@ public class InsertRow {
         }
     }
 
+    /**
+     * Finds primary key in the table
+     * @return
+     */
     private int findPrimaryKey(){
         int primaryKeyIndex = 0;
         for(int i = 0; i < table.numColumns(); i++){
