@@ -112,7 +112,7 @@ public class InsertRow {
                         break;
                     case Column.CHAR:
                         String charValue = (String) value;
-                        valueBuffer.writeChars(charValue);
+                        valueBuffer.writeBytes(charValue);
                         break;
                 }
             }
