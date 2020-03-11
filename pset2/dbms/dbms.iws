@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3496ea49-cf70-4ae8-ba9f-46aab6f00cbc" name="Default Changelist" comment="" />
+    <list default="true" id="3496ea49-cf70-4ae8-ba9f-46aab6f00cbc" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/InsertRow.java" beforeDir="false" afterPath="$PROJECT_DIR$/InsertRow.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dbms.iws" beforeDir="false" afterPath="$PROJECT_DIR$/dbms.iws" afterDir="false" />
+    </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +72,7 @@
       <workItem from="1582945758158" duration="3721000" />
       <workItem from="1583007120387" duration="27861000" />
       <workItem from="1583544412907" duration="760000" />
-      <workItem from="1583648837557" duration="41681000" />
+      <workItem from="1583648837557" duration="42512000" />
     </task>
     <servers />
   </component>

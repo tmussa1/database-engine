@@ -141,7 +141,7 @@ public class InsertRow {
                 break;
             case Column.CHAR:
                 String charKey = (String) key;
-                keyBuffer.writeChars(charKey);
+                keyBuffer.writeBytes(charKey);
                 break;
         }
     }
