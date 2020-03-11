@@ -173,9 +173,9 @@ public class InsertRow {
             } else {
                 if(column.getType() == Column.VARCHAR){
                     String strColumn = (String) columnVal;
-                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, strColumn.length(), strColumn);
+                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, strColumn.length());
                 } else{
-                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, column.getLength(), columnVal);
+                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, column.getLength());
                 }
             }
         }
@@ -205,10 +205,9 @@ public class InsertRow {
      * @param offsets
      * @param predecessor
      * @param index
-     * @param length
+     * @param value
      */
-    private void findANonNegativePredecessorAndSetOffset(int[] offsets, int predecessor, int index,
-                                                         int length, Object columnVal) {
+    private void findANonNegativePredecessorAndSetOffset(int[] offsets, int predecessor, int index, int value) {
         int firstOffset = (this.offsets.length * 2);
 
         while(predecessor > 0 && offsets[predecessor] < 0){
@@ -221,16 +220,11 @@ public class InsertRow {
             previousVal = 0;
         } else {
             if(predecessor == 0 && offsets[predecessor] < 0){
-
-                if(columnVal == null || ((String) columnVal).isEmpty()){
-                    offsets[index] = IS_NULL;
-                }else {
-                    offsets[index] = firstOffset;
-                    isFirstOffset = true;
-                    previousVal = length;
-                }
+                offsets[index] = firstOffset;
+                isFirstOffset = true;
+                previousVal = value;
             } else {
-                offsets[index] = offsets[predecessor] + length;
+                offsets[index] = offsets[predecessor] + value;
             }
         }
     }
