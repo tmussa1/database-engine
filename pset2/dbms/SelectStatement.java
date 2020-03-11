@@ -84,6 +84,8 @@ public class SelectStatement extends SQLStatement {
             iter = new TableIterator(this, table, true);
             iter.printAll(System.out);
 
+            System.out.println("Selected " + iter.numTuples() + " tuples.");
+
         } catch (Exception e) {
             String errMsg = e.getMessage();
             if (errMsg != null) {

@@ -96,7 +96,7 @@ public class InsertStatement extends SQLStatement {
         OperationStatus operationStatus = db.putNoOverwrite(null, key, value);
 
         if(operationStatus == OperationStatus.SUCCESS){
-            logger.info("Successfully inserted into database");
+            System.out.println("Added 1 row to Courses.");
         } else if(operationStatus == OperationStatus.KEYEXIST){
             throw new Exception("A primary key must have unique value in table " + table.getName());
         } else {
