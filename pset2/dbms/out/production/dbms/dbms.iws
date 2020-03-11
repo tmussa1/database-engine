@@ -3,19 +3,12 @@
   <component name="ChangeListManager">
     <list default="true" id="3496ea49-cf70-4ae8-ba9f-46aab6f00cbc" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/InsertRow.java" beforeDir="false" afterPath="$PROJECT_DIR$/InsertRow.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/InsertStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/InsertStatement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SelectStatement.java" beforeDir="false" afterPath="$PROJECT_DIR$/SelectStatement.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/TableIterator.java" beforeDir="false" afterPath="$PROJECT_DIR$/TableIterator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/00000000.jdb" beforeDir="false" afterPath="$PROJECT_DIR$/db/00000000.jdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db/je.config.csv" beforeDir="false" afterPath="$PROJECT_DIR$/db/je.config.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/je.info.0.lck" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/db/je.stat.csv" beforeDir="false" afterPath="$PROJECT_DIR$/db/je.stat.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dbms.iws" beforeDir="false" afterPath="$PROJECT_DIR$/dbms.iws" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/dbms/InsertRow.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/dbms/InsertRow.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/dbms/InsertStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/dbms/InsertStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/dbms/SelectStatement.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/dbms/SelectStatement.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/dbms/TableIterator.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/dbms/TableIterator.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/dbms/db/00000000.jdb" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/dbms/db/00000000.jdb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/dbms/db/je.config.csv" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/dbms/db/je.config.csv" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/dbms/db/je.info.0.lck" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/dbms/db/je.stat.csv" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/dbms/db/je.stat.csv" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/dbms/dbms.iws" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/dbms/dbms.iws" afterDir="false" />
     </list>
@@ -86,7 +79,7 @@
       <workItem from="1582945758158" duration="3721000" />
       <workItem from="1583007120387" duration="27861000" />
       <workItem from="1583544412907" duration="760000" />
-      <workItem from="1583648837557" duration="37391000" />
+      <workItem from="1583648837557" duration="39110000" />
     </task>
     <servers />
   </component>
@@ -119,19 +112,39 @@
           <option name="timeStamp" value="15" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/InsertRow.java</url>
-          <line>70</line>
-          <option name="timeStamp" value="16" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/InsertRow.java</url>
-          <line>72</line>
-          <option name="timeStamp" value="17" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/InsertStatement.java</url>
           <line>95</line>
           <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/InsertRow.java</url>
+          <line>229</line>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/InsertRow.java</url>
+          <line>231</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/InsertRow.java</url>
+          <line>175</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/InsertRow.java</url>
+          <line>177</line>
+          <option name="timeStamp" value="24" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/InsertRow.java</url>
+          <line>171</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/InsertStatement.java</url>
+          <line>63</line>
+          <option name="timeStamp" value="26" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -204,25 +204,48 @@ public class TableIterator {
 
         Column column = getColumn(colIndex);
 
+        /**
+         * Read it from the key for a primary key column
+         */
         if(column.isPrimaryKey()){
             return returnPrimaryKeyColumn();
         }
 
         RowInput valueInput = new RowInput(value.getData());
 
+        /**
+         * Read offsets
+         */
         int [] offsets = readOffsets(valueInput);
 
+        /**
+         * Unmarshal a specific column
+         */
         return readColumnValue(column, offsets, colIndex, valueInput);
     }
 
+    /**
+     * Reads the column value
+     * @param column
+     * @param offsets
+     * @param colIndex
+     * @param valueInput
+     * @return
+     */
     private Object readColumnValue(Column column, int [] offsets, int colIndex, RowInput valueInput) {
 
         int currentOffset = offsets[colIndex];
 
+        /**
+         * If the value at current offset is null
+         */
         if(currentOffset == IS_NULL){
             return null;
         }
 
+        /**
+         * Determine how many bytes to read for varchars and go off the column length for the rest
+         */
         switch(column.getType()){
             case Column.VARCHAR:
                 int nextOffset = colIndex + 1;
@@ -246,6 +269,10 @@ public class TableIterator {
         }
     }
 
+    /**
+     * If the column to be read was a primary key, read it from the key section
+     * @return
+     */
     private String returnPrimaryKeyColumn() {
         RowInput keyInput = new RowInput(key.getData());
         int keyLength = key.getSize();
@@ -253,6 +280,11 @@ public class TableIterator {
         return primaryKey;
     }
 
+    /**
+     * Retrieve values of offsets
+     * @param valueInput
+     * @return
+     */
     private int[] readOffsets(RowInput valueInput) {
         int [] offsets = new int [numColumns() + 1];
 

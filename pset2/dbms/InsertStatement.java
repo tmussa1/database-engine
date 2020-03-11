@@ -78,7 +78,7 @@ public class InsertStatement extends SQLStatement {
     }
 
     /**
-     * Persists to database
+     * Persists key/value pairs to disc
      * @param row
      * @param table
      * @return

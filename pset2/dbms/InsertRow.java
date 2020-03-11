@@ -78,7 +78,7 @@ public class InsertRow {
     }
 
     /**
-     * Writes offsets
+     * Writes offsets to the buffer
      * @throws IOException
      */
     private void writeOffsets() throws IOException {
@@ -88,7 +88,7 @@ public class InsertRow {
     }
 
     /**
-     * Writes values based on type
+     * Writes values to the buffer based on type
      * @throws IOException
      */
     private void writeValues() throws IOException {
@@ -120,7 +120,7 @@ public class InsertRow {
     }
 
     /**
-     * Writes primary key based on type
+     * Writes primary key to the buffer based on type
      * @throws IOException
      */
     private void writePrimaryKey() throws IOException {
@@ -154,31 +154,59 @@ public class InsertRow {
 
         int firstOffset = (this.offsets.length * 2);
 
+        /**
+         * If the first column is a primary key
+         */
         if(findPrimaryKey() == 0){
             offsets[0] = IS_PKEY;
+        /**
+         * If the first column is null
+         */
         } else if(this.columnVals[0] == null){
             offsets[0] = IS_NULL;
+        /**
+         * If neither and if the first column is a regular column with value
+         */
         } else {
             offsets[0] = firstOffset;
         }
 
+        /**
+         * Loop through for the rest of the columns
+         */
         for(int i = 1; i < this.table.numColumns(); i++){
             Column column = this.table.getColumn(i);
             Object columnVal = this.columnVals[i];;
 
+            /**
+             * Check if the column is a primary key column
+             */
             if(i == findPrimaryKey()){
                 offsets[i] = IS_PKEY;
+            /**
+             * Check if the column is null
+             */
             } else if(this.columnVals[i] == null){
                 offsets[i] = IS_NULL;
             } else {
+                /**
+                 * For a non-primary key and non-null column, find the length if it is varchar
+                 */
                 if(column.getType() == Column.VARCHAR){
                     String strColumn = (String) columnVal;
-                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, strColumn.length());
+                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, strColumn.length(), strColumn);
                 } else{
-                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, column.getLength());
+                    /**
+                     * The length of the column is used for non varchar column
+                     */
+                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, column.getLength(), columnVal);
                 }
             }
         }
+        /**
+         * The last offset marking end of offsets. If all the columns are nulls and primary keys, the last offset will
+         * be negative
+         */
         populateLastOffset(offsets);
     }
 
@@ -187,13 +215,30 @@ public class InsertRow {
      * @param offsets
      */
     private void populateLastOffset(int[] offsets) {
+
         int lastPositiveIndex = offsets.length - 2;
-        while(offsets[lastPositiveIndex] < 0){
+
+        /**
+         * Iterate till finding a positive offset
+         */
+        while(lastPositiveIndex >= 0 && offsets[lastPositiveIndex] < 0){
             lastPositiveIndex--;
         }
-        if(this.table.getColumn(lastPositiveIndex).getType() == Column.VARCHAR){
+
+        /**
+         * If all negative offsets, set last offset to negative
+         */
+        if(lastPositiveIndex <= 0){
+            offsets[offsets.length - 1] = IS_NULL;
+        /**
+         * Get the length of the varchar if it was varchar type and add it
+         */
+        } else if(this.table.getColumn(lastPositiveIndex).getType() == Column.VARCHAR){
             offsets[offsets.length - 1] = ((String) this.columnVals[lastPositiveIndex]).length() +
                     offsets[lastPositiveIndex];
+        /**
+         * For all other columns, add the length of column to last positive offset
+         */
         } else {
             offsets[offsets.length - 1] = this.table.getColumn(lastPositiveIndex).getLength() +
                     offsets[lastPositiveIndex];
@@ -205,26 +250,51 @@ public class InsertRow {
      * @param offsets
      * @param predecessor
      * @param index
-     * @param value
+     * @param length
      */
-    private void findANonNegativePredecessorAndSetOffset(int[] offsets, int predecessor, int index, int value) {
+    private void findANonNegativePredecessorAndSetOffset(int[] offsets, int predecessor, int index, int length,
+                                                         Object columnVal) {
         int firstOffset = (this.offsets.length * 2);
 
+        /**
+         * find the last non negative offset
+         */
         while(predecessor > 0 && offsets[predecessor] < 0){
             predecessor--;
         }
 
+        /**
+         * If the predecessor non negative offset was the first non negative offset, add its length to
+         * the recorded firstOffset value to obtain current offset. Reset the flag back to false after
+         * doing so
+         */
         if(isFirstOffset){
             offsets[index] = offsets[predecessor] + previousVal;
             isFirstOffset = false;
             previousVal = 0;
         } else {
+            /**
+             * If that was not the case and all negatives so fat
+             */
             if(predecessor == 0 && offsets[predecessor] < 0){
-                offsets[index] = firstOffset;
-                isFirstOffset = true;
-                previousVal = value;
+                /**
+                 * If the value os null, set it to null
+                 */
+                if(columnVal == null || ((String)columnVal).isEmpty()){
+                    offsets[index] = IS_NULL;
+                    /**
+                     * Mark the beginning of positive offsets otherwise
+                     */
+                } else {
+                    offsets[index] = firstOffset;
+                    isFirstOffset = true;
+                    previousVal = length;
+                }
+                /**
+                 * For the regular positive offsets add length to the previous offset
+                 */
             } else {
-                offsets[index] = offsets[predecessor] + value;
+                offsets[index] = offsets[predecessor] + length;
             }
         }
     }
