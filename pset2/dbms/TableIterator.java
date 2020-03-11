@@ -6,7 +6,6 @@
 
 import java.io.*;
 import com.sleepycat.je.*;
-import com.sun.scenario.effect.Offset;
 
 /**
  * A class that serves as an iterator over some or all of the rows in
