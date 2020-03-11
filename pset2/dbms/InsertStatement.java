@@ -5,12 +5,18 @@
  */
 
 import java.util.*;
+import java.util.logging.Logger;
+
 import com.sleepycat.je.*;
+import com.sleepycat.persist.impl.Store;
 
 /**
  * A class that represents an INSERT statement.
  */
 public class InsertStatement extends SQLStatement {
+
+    Logger logger = Logger.getLogger(InsertStatement.class.getName());
+
     /** 
      * Constructs an InsertStatement object involving the specified table,
      * list of columns (if any), and list of values.  The columns and 
@@ -56,13 +62,12 @@ public class InsertStatement extends SQLStatement {
             // and use that object to marshall the row.
             InsertRow row = new InsertRow(table, adjustedValues);
             row.marshall();
-            
-            /* 
-             * PS 2: Add code below to perform the actual insertion, 
-             * and to print the appropriate message after it has occurred.
+
+            /**
+             * Persists marshalled data to disc
              */
-            
-            
+            persistValuesInDB(row, table);
+
         } catch (Exception e) {
             String errMsg = e.getMessage();
             if (errMsg != null) {
@@ -70,5 +75,33 @@ public class InsertStatement extends SQLStatement {
             }
             System.err.println("Could not insert row.");
         }
+    }
+
+    /**
+     * Persists to database
+     * @param row
+     * @param table
+     * @return
+     * @throws Exception
+     */
+    private OperationStatus persistValuesInDB(InsertRow row, Table table) throws Exception {
+        Database db = table.getDB();
+
+        RowOutput keyBuffer = row.getKeyBuffer();
+        RowOutput valueBuffer = row.getValueBuffer();
+
+        DatabaseEntry key = new DatabaseEntry(keyBuffer.getBufferBytes(), 0, keyBuffer.getBufferLength());
+        DatabaseEntry value = new DatabaseEntry(valueBuffer.getBufferBytes(), 0, valueBuffer.getBufferLength());
+
+        OperationStatus operationStatus = db.putNoOverwrite(null, key, value);
+
+        if(operationStatus == OperationStatus.SUCCESS){
+            logger.info("Successfully inserted into database");
+        } else if(operationStatus == OperationStatus.KEYEXIST){
+            throw new Exception("A primary key must have unique value in table " + table.getName());
+        } else {
+            throw new Exception("Error inserting into database " + table.getDB().getDatabaseName());
+        }
+        return operationStatus;
     }
 }

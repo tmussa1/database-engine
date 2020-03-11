@@ -62,13 +62,28 @@ public class SelectStatement extends SQLStatement {
     }
     
     public void execute() throws DatabaseException, DeadlockException {
+
+        if(numTables() > 1){
+            throw new UnsupportedOperationException("You can't specify more than one table for selection");
+        }
+
+        if(this.selectList.size() > 1){
+            throw new UnsupportedOperationException("You can only select *. Specifying columns is not possible");
+        }
+
         TableIterator iter = null;
-        
+
         try {
-            /* 
-             * PS 2: Add code here to implement the rest of the method
-             * as described in the assignment.
-             */
+            Table table = getTable(0);
+            OperationStatus status = table.open();
+
+            if(status != OperationStatus.SUCCESS){
+                throw new IllegalStateException("Couldn't open table");
+            }
+
+            iter = new TableIterator(this, table, true);
+            iter.printAll(System.out);
+
         } catch (Exception e) {
             String errMsg = e.getMessage();
             if (errMsg != null) {

@@ -7,6 +7,7 @@
 import com.sleepycat.je.*;
 import java.io.*;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 
 /**
@@ -32,6 +33,7 @@ public class InsertRow {
 
     private boolean isFirstOffset = false;
     private int previousVal = 0;
+    Logger logger = Logger.getLogger(InsertRow.class.getName());
     
     /**
      * Constructs an InsertRow object for a row containing the specified
@@ -70,16 +72,8 @@ public class InsertRow {
             writeOffsets();
             writeValues();
         } catch (IOException e) {
-            System.out.println("Error writing to buffer");
+            logger.warning("Error writing to buffer " + e.getCause());
         }
-
-        DatabaseEntry key = new DatabaseEntry(keyBuffer.getBufferBytes(), 0, keyBuffer.getBufferLength());
-        DatabaseEntry value = new DatabaseEntry(valueBuffer.getBufferBytes(), 0, valueBuffer.getBufferLength());
-
-        //TODO - find out how to open the database
-        Database db = null;
-
-        db.putNoOverwrite(null, key, value);
 
     }
 
@@ -170,6 +164,7 @@ public class InsertRow {
 
         for(int i = 1; i < this.table.numColumns(); i++){
             Column column = this.table.getColumn(i);
+            Object columnVal = this.columnVals[i];;
 
             if(i == findPrimaryKey()){
                 offsets[i] = IS_PKEY;
@@ -177,10 +172,10 @@ public class InsertRow {
                 offsets[i] = IS_NULL;
             } else {
                 if(column.getType() == Column.VARCHAR){
-                    String strColumn = (String) this.columnVals[i];
-                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, strColumn.length());
+                    String strColumn = (String) columnVal;
+                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, strColumn.length(), strColumn);
                 } else{
-                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, column.getLength());
+                    findANonNegativePredecessorAndSetOffset(offsets, i - 1, i, column.getLength(), columnVal);
                 }
             }
         }
@@ -210,9 +205,10 @@ public class InsertRow {
      * @param offsets
      * @param predecessor
      * @param index
-     * @param value
+     * @param length
      */
-    private void findANonNegativePredecessorAndSetOffset(int[] offsets, int predecessor, int index, int value) {
+    private void findANonNegativePredecessorAndSetOffset(int[] offsets, int predecessor, int index,
+                                                         int length, Object columnVal) {
         int firstOffset = (this.offsets.length * 2);
 
         while(predecessor > 0 && offsets[predecessor] < 0){
@@ -225,11 +221,16 @@ public class InsertRow {
             previousVal = 0;
         } else {
             if(predecessor == 0 && offsets[predecessor] < 0){
-                offsets[index] = firstOffset;
-                isFirstOffset = true;
-                previousVal = value;
+
+                if(columnVal == null || ((String) columnVal).isEmpty()){
+                    offsets[index] = IS_NULL;
+                }else {
+                    offsets[index] = firstOffset;
+                    isFirstOffset = true;
+                    previousVal = length;
+                }
             } else {
-                offsets[index] = offsets[predecessor] + value;
+                offsets[index] = offsets[predecessor] + length;
             }
         }
     }

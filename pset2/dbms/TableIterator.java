@@ -6,6 +6,7 @@
 
 import java.io.*;
 import com.sleepycat.je.*;
+import com.sun.scenario.effect.Offset;
 
 /**
  * A class that serves as an iterator over some or all of the rows in
@@ -20,7 +21,8 @@ public class TableIterator {
     private DatabaseEntry value;
     private ConditionalExpression where;
     private int numTuples;
-    
+
+    public static final int IS_NULL = -2;
     /**
      * Constructs a TableIterator object for the subset of the specified
      * table that is defined by the given SQLStatement.  If the
@@ -157,12 +159,18 @@ public class TableIterator {
         if (this.cursor == null) {
             throw new IllegalStateException("this iterator has been closed");
         }
-        
-        /* 
-         * PS 2: replace the following return statement with your 
-         * implementation of the rest of this method.
-         */
-        return true;
+
+        while(!this.where.isTrue()){
+             this.cursor.getNext(this.key, this.value, null);
+        }
+
+        OperationStatus status = this.cursor.getNext(this.key, this.value, null);
+
+        if(status == OperationStatus.SUCCESS){
+            this.numTuples++;
+            return true;
+        }
+        return false;
     }
     
     /**
@@ -193,13 +201,67 @@ public class TableIterator {
      * @throws  IndexOutOfBoundsException if the specified index is invalid
      */
     public Object getColumnVal(int colIndex) {
-        /* 
-         * PS 2: replace the following return statement with your 
-         * implementation of this method.
-         */
-        return null;
+
+        Column column = getColumn(colIndex);
+
+        if(column.isPrimaryKey()){
+            return returnPrimaryKeyColumn();
+        }
+
+        RowInput valueInput = new RowInput(value.getData());
+
+        int [] offsets = readOffsets(valueInput);
+
+        return readColumnValue(column, offsets, colIndex, valueInput);
     }
-    
+
+    private Object readColumnValue(Column column, int [] offsets, int colIndex, RowInput valueInput) {
+
+        int currentOffset = offsets[colIndex];
+
+        if(currentOffset == IS_NULL){
+            return null;
+        }
+
+        switch(column.getType()){
+            case Column.VARCHAR:
+                int nextOffset = colIndex + 1;
+                while(offsets[nextOffset] < 0){
+                    nextOffset++;
+                }
+                int varcharLength = offsets[nextOffset] - currentOffset;
+                String  strValue = valueInput.readBytesAtOffset(currentOffset, varcharLength);
+                return strValue;
+            case Column.INTEGER:
+                int intValue = valueInput.readIntAtOffset(currentOffset);
+                return intValue;
+            case Column.REAL:
+                double doubleValue = valueInput.readDoubleAtOffset(currentOffset);
+                return doubleValue;
+            case Column.CHAR:
+                String charValue = valueInput.readBytesAtOffset(currentOffset, column.getLength());
+                return charValue;
+            default:
+                throw new IllegalArgumentException("Unsupported format exception");
+        }
+    }
+
+    private String returnPrimaryKeyColumn() {
+        RowInput keyInput = new RowInput(key.getData());
+        int keyLength = key.getSize();
+        String primaryKey = keyInput.readNextBytes(keyLength);
+        return primaryKey;
+    }
+
+    private int[] readOffsets(RowInput valueInput) {
+        int [] offsets = new int [numColumns() + 1];
+
+        for(int i = 0; i < numColumns() + 1; i++){
+            offsets[i] = valueInput.readNextShort();
+        }
+        return offsets;
+    }
+
     /**
      * Gets the number of tuples that the iterator has visited.
      *
