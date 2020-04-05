@@ -1,44 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="6de56598-1fcb-442f-ab64-5adc824f98c0" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../pset2/dbms/dbms.iws" beforeDir="false" afterPath="$PROJECT_DIR$/../pset2/dbms/dbms.iws" afterDir="false" />
-    </list>
+    <list default="true" id="3496ea49-cf70-4ae8-ba9f-46aab6f00cbc" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="DatabaseView">
-    <option name="SHOW_INTERMEDIATE" value="true" />
-    <option name="GROUP_DATA_SOURCES" value="true" />
-    <option name="GROUP_SCHEMA" value="true" />
-    <option name="GROUP_CONTENTS" value="false" />
-    <option name="SORT_POSITIONED" value="false" />
-    <option name="SHOW_EMPTY_GROUPS" value="false" />
-    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
-    <option name="HIDDEN_KINDS">
-      <set />
-    </option>
-    <expand>
-      <path>
-        <item name="Database" type="3277223f:DatabaseStructure$DbRootGroup" />
-        <item name="movie" type="feb32156:DbDataSourceImpl" />
-      </path>
-    </expand>
-    <select />
-  </component>
   <component name="Git.Settings">
-    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
-  <component name="ProjectId" id="1ZyYavFIVLy2JIUa8PvIL1AzRvD" />
+  <component name="ProjectId" id="1YEAS5DCzDPyZyfuvoCUchUCrL4" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
-    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/sqlite-jdbc-3.7.15-M1.jar!/" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -48,6 +25,7 @@
     <property name="project.structure.last.edited" value="Libraries" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -62,15 +40,17 @@
     </option>
   </component>
   <component name="RunManager">
-    <configuration name="XMLforMovies" type="Application" factoryName="Application" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="XMLforMovies" />
-      <module name="pset3" />
+    <configuration name="DBMS" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="DBMS" />
+      <module name="dbms" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="XMLforMovies" />
+      <option name="MAIN_CLASS_NAME" value="DBMS" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -81,15 +61,17 @@
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="6de56598-1fcb-442f-ab64-5adc824f98c0" name="Default Changelist" comment="" />
-      <created>1585812868089</created>
+      <changelist id="3496ea49-cf70-4ae8-ba9f-46aab6f00cbc" name="Default Changelist" comment="" />
+      <created>1582497376266</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1585812868089</updated>
-      <workItem from="1585812871219" duration="2615000" />
-      <workItem from="1585815888609" duration="1281000" />
-      <workItem from="1585817697324" duration="11431000" />
-      <workItem from="1586023585327" duration="13077000" />
+      <updated>1582497376266</updated>
+      <workItem from="1582497377646" duration="356000" />
+      <workItem from="1582945758158" duration="3721000" />
+      <workItem from="1583007120387" duration="27861000" />
+      <workItem from="1583544412907" duration="760000" />
+      <workItem from="1583648837557" duration="46058000" />
+      <workItem from="1584306785356" duration="144000" />
     </task>
     <servers />
   </component>
@@ -108,5 +90,15 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/CreateStatement.java</url>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

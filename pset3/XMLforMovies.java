@@ -195,7 +195,6 @@ public class XMLforMovies {
             xmlResult.append(directorsFor(movieID));
             xmlResult.append("  ");
             xmlResult.append("</movie>");
-            xmlResult.append("\n");
         }
 
         return xmlResult.toString().isEmpty() ? "" : xmlResult.toString();
