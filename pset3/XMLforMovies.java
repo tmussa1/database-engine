@@ -195,6 +195,7 @@ public class XMLforMovies {
             xmlResult.append(directorsFor(movieID));
             xmlResult.append("  ");
             xmlResult.append("</movie>");
+            xmlResult.append("\n");
         }
 
         return xmlResult.toString().isEmpty() ? "" : xmlResult.toString();
@@ -252,19 +253,6 @@ public class XMLforMovies {
         // Create an XMLforMovies object for the SQLite database, and
         // convert the entire database into an XML file.
         XMLforMovies xml = new XMLforMovies(dbFilename);
-//        System.out.println(xml.fieldsFor(xml.idFor("Black Panther")));
-//        System.out.println(xml.fieldsFor(xml.idFor("West Side Story")));
-//        System.out.println(xml.fieldsFor("1234567"));
-
-//        System.out.println(xml.actorsFor(xml.idFor("Black Panther")));
-//        System.out.println(xml.actorsFor(xml.idFor("Wonder Woman")));
-//        System.out.println(xml.actorsFor("1234567"));
-
-//        System.out.println(xml.directorsFor(xml.idFor("Black Panther")));
-//        System.out.println(xml.directorsFor(xml.idFor("Frozen")));
-//        System.out.println(xml.directorsFor("1234567"));
-
-        System.out.println(xml.elementFor("1234567"));
 
         xml.createFile("movies.xml");
         xml.closeDB();

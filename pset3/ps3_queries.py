@@ -95,5 +95,20 @@ query5 = """
 #    (only required of grad-credit students)
 #
 query6 = """
-
+    for $o in //oscar
+    for $p in //person
+    let $movCount := tokenize($p/@actedIn, '\s')
+    let $typeCount := $o/type
+    where $o/type = ('BEST-ACTRESS', 'BEST-ACTOR')
+    and $p/@id = $o/@person_id
+    and count($movCount) >= 6
+    let $id :=  $o/@person_id
+    group by $id
+    return if(count($typeCount) >= 2)then(<acting-legend>{
+      <name>{$p/name/text()}</name>,
+      <num-movies>{count($movCount)}</num-movies>,
+      for $m in //movie
+      where $m/@id = $o/@movie_id
+      return <won-for>{$m/name/text(), ' (', $o[@movie_id = $m/@id]/year/text(), ')'}</won-for>
+    }</acting-legend>)
 """
